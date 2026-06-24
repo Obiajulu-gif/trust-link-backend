@@ -8,29 +8,44 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiProperty } from '@nestjs/swagger';
-import { IsString, MinLength } from 'class-validator';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 import { SkipThrottle } from '@nestjs/throttler';
 import { IsStellarAddress } from '../../common/validators/stellar-address.validator';
 import { Sep10Service } from './sep10.service';
 
 class ChallengeRequestDto {
-  @ApiProperty({ description: 'Stellar public key (G...) of the wallet requesting a challenge.', example: 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5' })
+  @ApiProperty({
+    description: 'Stellar public key (G...) of the wallet requesting a challenge.',
+    example: 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5',
+    maxLength: 128,
+  })
   @IsString()
+  @MaxLength(128)
   @IsStellarAddress()
   publicKey!: string;
 }
 
 class VerifyChallengeDto {
-  @ApiProperty({ description: 'Base64-encoded signed SEP-10 challenge XDR returned by the challenge endpoint.', example: 'AAAAAQAAAA...' })
+  @ApiProperty({
+    description: 'Base64-encoded signed SEP-10 challenge XDR returned by the challenge endpoint.',
+    example: 'AAAAAQAAAA...',
+    maxLength: 8192,
+  })
   @IsString()
   @MinLength(1)
+  @MaxLength(8192)
   transaction!: string;
 }
 
 class RefreshTokenDto {
-  @ApiProperty({ description: 'Refresh token issued during the last successful authentication.', example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' })
+  @ApiProperty({
+    description: 'Refresh token issued during the last successful authentication.',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    maxLength: 4096,
+  })
   @IsString()
   @MinLength(1)
+  @MaxLength(4096)
   refreshToken!: string;
 }
 
