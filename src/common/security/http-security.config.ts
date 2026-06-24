@@ -1,5 +1,3 @@
-import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-
 export const DEFAULT_JSON_BODY_LIMIT = '1mb';
 export const DEFAULT_WEBHOOK_BODY_LIMIT = '1mb';
 
@@ -14,6 +12,19 @@ export interface BuildCspConnectSrcInput {
   sentryDsn?: string;
   otelExporterOtlpEndpoint?: string;
   extraConnectSrc?: string[];
+}
+
+type CorsOriginResolver = (
+  origin: string | undefined,
+  callback: (err: Error | null, allow?: boolean) => void,
+) => void;
+
+export interface TrustLinkCorsOptions {
+  origin: boolean | CorsOriginResolver;
+  methods?: string[];
+  allowedHeaders?: string[];
+  credentials?: boolean;
+  maxAge?: number;
 }
 
 export function normalizeOrigin(value: string | undefined): string | undefined {
@@ -34,7 +45,7 @@ export function parseCommaSeparatedOrigins(raw: string | undefined): string[] {
     .filter(Boolean);
 }
 
-export function buildCorsOptions(input: BuildCorsOptionsInput): CorsOptions {
+export function buildCorsOptions(input: BuildCorsOptionsInput): TrustLinkCorsOptions {
   const { allowedOrigins, isProduction } = input;
 
   if (allowedOrigins.length === 0) {
