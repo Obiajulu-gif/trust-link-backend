@@ -28,10 +28,13 @@ export class CreateEscrowDto {
   @ApiProperty({
     description: 'Vendor-side reference or SKU that identifies the item.',
     minLength: 3,
+    maxLength: 255,
     example: 'SKU-CAM-A7IV-001',
   })
   @IsString()
   @MinLength(3)
+  @MaxLength(255, { message: 'Item reference must not exceed 255 characters' })
+  @Transform(({ value }) => value?.trim())
   itemRef!: string;
 
   @ApiProperty({
@@ -40,6 +43,8 @@ export class CreateEscrowDto {
   })
   @IsNumber()
   @IsPositive()
+  @Min(0.01)
+  @Max(1_000_000_000)
   amount!: number;
 
   @ApiProperty({
@@ -60,9 +65,11 @@ export class CreateEscrowDto {
 
   @ApiProperty({
     description: 'Stellar public key of the buyer funding the escrow.',
+    maxLength: 128,
     example: 'GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5',
   })
   @IsString()
+  @MaxLength(128, { message: 'Buyer address must not exceed 128 characters' })
   @IsStellarAddress()
   @Transform(({ value }) => value?.trim())
   buyerAddress!: string;
